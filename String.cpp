@@ -1,12 +1,13 @@
 #include "String.h"
 #include <cstring>
+#include <cstdlib>
 
-myString::myString() {
+myString::myString() { /* DONE */
     str = new char[1];
     *str = '\0';
 }
 
-myString::myString(char* inpStr) {
+myString::myString(char* inpStr) { /* DONE */
     if (inpStr) {
         str = new char[strlen(inpStr) + 1];
         strcpy(str, inpStr);
@@ -17,7 +18,7 @@ myString::myString(char* inpStr) {
     }
 }
 
-myString::myString(const std::string cppStyle) {
+myString::myString(const std::string cppStyle) { /* DONE */
     str = new char[cppStyle.length() + 1];
     for (int i = 0; i < cppStyle.length(); i++) {
         str[i] = cppStyle[i];
@@ -25,13 +26,13 @@ myString::myString(const std::string cppStyle) {
     str[cppStyle.length()] = '\0';
 }
 
-myString::myString(const myString& orig) {
+myString::myString(const myString& orig) { /* DONE */
     str = new char[strlen(orig.str) + 1]; 
     strcpy(str, orig.str);
     status = orig.status;
 }
 
-myString& myString::operator=(const myString& orig) {
+myString& myString::operator=(const myString& orig) { /* DONE */
     if (this != &orig) {
         delete[] str;
         str = new char[strlen(orig.str) + 1];
@@ -41,7 +42,13 @@ myString& myString::operator=(const myString& orig) {
     return *this;
 }
 
-void myString::addStart(const myString& orig) {
+void myString::addStart(const myString& orig) { /* DONE */
+    // null error check
+    if (str == nullptr || orig.str == nullptr) {
+        std::cout << "Error: one or more strings = nullptr, no value modified\n";
+        return;
+    }
+
     int origLen = strlen(orig.str);
     int currLen = strlen(str);
 
@@ -58,7 +65,13 @@ void myString::addStart(const myString& orig) {
     temp = nullptr;
 }
 
-void myString::addEnd(const myString& orig) {
+void myString::addEnd(const myString& orig) { /* DONE */
+    // null error check
+    if (str == nullptr || orig.str == nullptr) {
+        std::cout << "Error: one or more strings = nullptr, no value modified\n";
+        return;
+    }
+
     int origLen = strlen(orig.str);
     int currLen = strlen(str);
     int fullLen = currLen + origLen;
@@ -72,7 +85,7 @@ void myString::addEnd(const myString& orig) {
     str = newStr;
 }
 
-myString myString::partString(const int startPos, const int length) {
+myString myString::partString(const int startPos, const int length) { /* DONE */
     int currLen = strlen(str);
 
     if (startPos == currLen) {
@@ -128,7 +141,7 @@ myString myString::partString(const int startPos, const int length) {
     }
 }
 
-void myString::setString(const std::string usrStr) {
+std::string myString::setString(const std::string usrStr) { /* DONE */
     delete[] str;
     str = new char[usrStr.length() + 1];
 
@@ -137,10 +150,25 @@ void myString::setString(const std::string usrStr) {
     }
     
     str[usrStr.length()] = '\0';
+
+    return str;
 }
 
-std::string myString::replPartString(const myString& orig, const int startPos, const int length) {
-    // Need to write error checks
+std::string myString::replPartString(const myString& orig, const int startPos, const int length) { /* DONE */
+    // Error Checks
+    if (str == nullptr || orig.str == nullptr) {
+        std::cout << "Error: one or more strings = nullptr, no value modified, returning \"Null\"\n";
+        return "Null";
+    }
+    if (startPos < 1 || startPos > strlen(str)) {
+        std::cout << "Invalid startPos, out of range, no value modified, returning \"Null\"\n";
+        return "Null";
+    }
+    if (length < 0 || (startPos - 1) + length > strlen(str)) {
+        std::cout << "Invalid length, no value modified, returning \"Null\"\n";
+        return "Null";
+    }
+
     char* newStr;
     int appendStatus = 0;
     int idx = startPos - 1;
@@ -176,7 +204,13 @@ std::string myString::replPartString(const myString& orig, const int startPos, c
     return str;
 }
 
-std::string myString::replWholeString(const myString& orig) {
+std::string myString::replWholeString(const myString& orig) { /* DONE */
+    // null error check
+    if (orig.str == nullptr) {
+        std::cout << "Error: paramter string is nullptr, no value modified, returning \"Null\"\n";
+        return "Null";
+    }
+
     delete[] str;
     str = nullptr;
 
@@ -188,11 +222,24 @@ std::string myString::replWholeString(const myString& orig) {
     return str;
 }
 
-int myString::compareString(const myString& orig) {
-    // Not done
-    for (int i = 0; i < strlen(str); ++i) {
-        if (str[i] != orig.str[i]) {
-            if (str[i] < orig.str[i]) {
+int myString::compareString(const myString& orig) { /* DONE */
+    // Null error check
+    if (str == nullptr || orig.str == nullptr) {
+        std::cout << "Error: a string in comparison is = to a nullptr, returning 1000\n";
+        return 1000;
+    }
+
+    int len = strlen(str);
+    int origLen = strlen(orig.str);
+    int minLen = std::min(len, origLen);
+    
+    for (int i = 0; i < minLen; ++i) {
+        // Case insensitive compare
+        char char1 = std::tolower(str[i]);
+        char char2 = std::tolower(orig.str[i]);
+
+        if (char1 != char2) {
+            if (char1 < char2) {
                 return i + 1;
             }
             else {
@@ -200,10 +247,21 @@ int myString::compareString(const myString& orig) {
             }
         }
     }
-    return 0;
+
+    if (len == origLen) {
+        return 0;
+    }
+
+    return (len < origLen) ? -(minLen + 1) : minLen + 1; // If strLen !=, return pos of longer str (as it comes first alpha)
 }
 
-bool myString::numericString() const {
+bool myString::numericString() const { /* DONE */
+    // null check
+    if (str == nullptr) {
+        std::cout << "String is nullptr, returning false\n";
+        return false;
+    }
+
     bool numeric = false;
     int decStatus = 0; // limit to one decimal
     int len = strlen(str);
@@ -240,7 +298,13 @@ bool myString::numericString() const {
     return numeric;
 }
 
-bool myString::alphabeticString() const {
+bool myString::alphabeticString() const { /* DONE */
+    // null check
+    if (str == nullptr) {
+        std::cout << "String is nullptr, returning false\n";
+        return false;
+    }
+
     bool alpha = false;
     int len = strlen(str);
 

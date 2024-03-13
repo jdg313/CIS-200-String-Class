@@ -43,6 +43,14 @@ int main() {
 
     str6.printStringScreen();
 
+    myString strComp1("Alpha");
+    myString strComp2("Alpha");
+    myString strComp3("Alph");
+    myString strComp4("alpha");
+
+    std::cout << "Comparing " << strComp1.getString() << " to " << strComp4.getString() << std::endl;
+    std::cout << strComp1.compareString(strComp4) << std::endl;
+
     myString str7("123");
     myString str8("1.23");
     myString str9("%1.2.3");

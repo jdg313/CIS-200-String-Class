@@ -1,4 +1,5 @@
 #include <iostream>
+#include <cstdlib>
 #include <cstring>
 
 class myString {
@@ -20,7 +21,7 @@ class myString {
         std::string replWholeString(const myString& orig); // Replaces curr str value with param, returns new string
         int compareString(const myString& orig); // Compares this->str to paramater str
         void initString() { delete[] str; str = new char[1]; *str = '\0'; } // Initialize string
-        void setString(const std::string usrStr); // Sets c style string
+        std::string setString(const std::string usrStr); // Sets c style string
         std::string getString() const { return str; } // Return the C style string
         void printStringScreen() const { std::cout << str << std::endl; } // print str to screen
         bool numericString() const; // check if str is an int or real #
