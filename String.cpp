@@ -1,4 +1,5 @@
 #include "String.h"
+#include <cstring>
 
 myString::myString() {
     str = new char[1];
