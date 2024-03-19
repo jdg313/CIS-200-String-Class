@@ -3,9 +3,15 @@
 #include <cstring>
 
 class myString {
-    private:
+    protected:
         char* str;
-        int status;
+        enum status {
+            OK = 0,
+            NULL_POINTER = 1,
+            OUT_OF_RANGE = 2,
+            INVALID_LENGTH = 3,
+        };
+        status errStatus = OK;
     public:
         myString(); // Default Constructor
         myString(char* inpStr); // C style Constructor
@@ -26,5 +32,4 @@ class myString {
         void printStringScreen() const { std::cout << str << std::endl; } // print str to screen
         bool numericString() const; // check if str is an int or real #
         bool alphabeticString() const; // check if str is purely alpha
-
 };

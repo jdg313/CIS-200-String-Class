@@ -5,16 +5,19 @@
 myString::myString() { /* DONE */
     str = new char[1];
     *str = '\0';
+    errStatus = OK;
 }
 
 myString::myString(char* inpStr) { /* DONE */
     if (inpStr) {
         str = new char[strlen(inpStr) + 1];
         strcpy(str, inpStr);
+        errStatus = OK;
     }
     else {
         str = new char[1];
         *str = '\0';
+        errStatus = OK;
     }
 }
 
@@ -24,12 +27,13 @@ myString::myString(const std::string cppStyle) { /* DONE */
         str[i] = cppStyle[i];
     }
     str[cppStyle.length()] = '\0';
+    errStatus = OK;
 }
 
 myString::myString(const myString& orig) { /* DONE */
     str = new char[strlen(orig.str) + 1]; 
     strcpy(str, orig.str);
-    status = orig.status;
+    errStatus = orig.errStatus;
 }
 
 myString& myString::operator=(const myString& orig) { /* DONE */
@@ -37,7 +41,7 @@ myString& myString::operator=(const myString& orig) { /* DONE */
         delete[] str;
         str = new char[strlen(orig.str) + 1];
         strcpy(str, orig.str);
-        status = orig.status;
+        errStatus = orig.errStatus;
     }
     return *this;
 }
@@ -46,6 +50,7 @@ void myString::addStart(const myString& orig) { /* DONE */
     // null error check
     if (str == nullptr || orig.str == nullptr) {
         std::cout << "Error: one or more strings = nullptr, no value modified\n";
+        errStatus = NULL_POINTER;
         return;
     }
 
@@ -69,6 +74,7 @@ void myString::addEnd(const myString& orig) { /* DONE */
     // null error check
     if (str == nullptr || orig.str == nullptr) {
         std::cout << "Error: one or more strings = nullptr, no value modified\n";
+        errStatus = NULL_POINTER;
         return;
     }
 
@@ -93,28 +99,28 @@ myString myString::partString(const int startPos, const int length) { /* DONE */
         return newStr;
     }
     else if (startPos + length > currLen) { // Error 1 check
-        status = 0;
+        errStatus = INVALID_LENGTH;
         std::cout << "Error: Start Position + Length is greater than the original string length";
         std::cout << "\nReturning null string\n";
         myString newStr;
         return newStr;
     }
     else if (startPos > currLen) { // Error 2 check
-        status = 0;
+        errStatus = INVALID_LENGTH;
         std::cout << "Error: Start position is greater than the original string length";
         std::cout << "\nReturning null string\n";
         myString newStr;
         return newStr;
     }
     else if (startPos < 1) { // Error 3 check
-        status = 0;
+        errStatus = OUT_OF_RANGE;
         std::cout << "Error: Start position is less than 1";
         std::cout << "\nReturning null string\n";
         myString newStr;
         return newStr;
     }
     else if (length <= 0) { // Error 4 check
-        status = 0;
+        errStatus = INVALID_LENGTH;
         std::cout << "Error: Length is less than 1";
         std::cout << "\nReturning null string\n";
         myString newStr;
@@ -158,14 +164,17 @@ std::string myString::replPartString(const myString& orig, const int startPos, c
     // Error Checks
     if (str == nullptr || orig.str == nullptr) {
         std::cout << "Error: one or more strings = nullptr, no value modified, returning \"Null\"\n";
+        errStatus = NULL_POINTER;
         return "Null";
     }
     if (startPos < 1 || startPos > strlen(str)) {
         std::cout << "Invalid startPos, out of range, no value modified, returning \"Null\"\n";
+        errStatus = OUT_OF_RANGE;
         return "Null";
     }
     if (length < 0 || (startPos - 1) + length > strlen(str)) {
         std::cout << "Invalid length, no value modified, returning \"Null\"\n";
+        errStatus = INVALID_LENGTH;
         return "Null";
     }
 
@@ -208,6 +217,7 @@ std::string myString::replWholeString(const myString& orig) { /* DONE */
     // null error check
     if (orig.str == nullptr) {
         std::cout << "Error: paramter string is nullptr, no value modified, returning \"Null\"\n";
+        errStatus = NULL_POINTER;
         return "Null";
     }
 
@@ -226,6 +236,7 @@ int myString::compareString(const myString& orig) { /* DONE */
     // Null error check
     if (str == nullptr || orig.str == nullptr) {
         std::cout << "Error: a string in comparison is = to a nullptr, returning 1000\n";
+        errStatus = NULL_POINTER;
         return 1000;
     }
 
@@ -259,6 +270,7 @@ bool myString::numericString() const { /* DONE */
     // null check
     if (str == nullptr) {
         std::cout << "String is nullptr, returning false\n";
+        // No enum update due to const method
         return false;
     }
 
@@ -302,6 +314,7 @@ bool myString::alphabeticString() const { /* DONE */
     // null check
     if (str == nullptr) {
         std::cout << "String is nullptr, returning false\n";
+        // No enum update due to const method
         return false;
     }
 
@@ -310,7 +323,7 @@ bool myString::alphabeticString() const { /* DONE */
 
     // unsure about spaces and punc, again, ask and clarify more about this func
     for (int i = 0; i < len; ++i) {
-        if ((!isalpha(str[i])) && (!isspace(str[i])) && (!ispunct(str[i]))) {
+        if (!isalpha(str[i])) {
             return alpha;
         }
     }
